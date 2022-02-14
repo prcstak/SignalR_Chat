@@ -8,6 +8,13 @@ namespace Chat.Hubs
         public async Task SendMessage(string user, string message)
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
+            
+        }
+        
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.All.SendAsync("Notify", $"{Context.ConnectionId} вошел в чат");
+            await base.OnConnectedAsync();
         }
     }
 }
