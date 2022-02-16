@@ -1,20 +1,27 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 
-namespace Chat.Hubs
+namespace Chat.Hubs;    
+
+public class ChatHub: Hub
 {
-    public class ChatHub : Hub
+    public async Task Send(string message, string username)
     {
-        public async Task SendMessage(string user, string message)
-        {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
-            
-        }
-        
-        public override async Task OnConnectedAsync()
-        {
-            await Clients.All.SendAsync("Notify", $"{Context.ConnectionId} вошел в чат");
-            await base.OnConnectedAsync();
-        }
+        await Clients.All.SendAsync("Send", message, username);
+    }
+    
+    public async Task SendTest(string username)
+    {
+        await Clients.All.SendAsync("Send", "disconnected", username);
+    }
+
+    public override async Task OnConnectedAsync()
+    {
+        await Clients.All.SendAsync("Greetings");
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        await Clients.Others.SendAsync("Disconnect");
+        await base.OnDisconnectedAsync(exception);
     }
 }
