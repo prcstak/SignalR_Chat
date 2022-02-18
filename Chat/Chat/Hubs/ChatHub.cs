@@ -1,27 +1,65 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Chat.Data;
+using Microsoft.AspNetCore.SignalR;
 
-namespace Chat.Hubs;    
-
-public class ChatHub: Hub
+namespace Chat.Hubs
 {
-    public async Task Send(string message, string username)
+    public class ChatHub : Hub
     {
-        await Clients.All.SendAsync("Send", message, username);
-    }
-    
-    public async Task SendTest(string username)
-    {
-        await Clients.All.SendAsync("Send", "disconnected", username);
-    }
+        public Mock db { get; set; }
 
-    public override async Task OnConnectedAsync()
-    {
-        await Clients.All.SendAsync("Greetings");
-    }
+        public ChatHub(Mock context)
+        {
+            db = context;
+        }
 
-    public override async Task OnDisconnectedAsync(Exception? exception)
-    {
-        await Clients.Others.SendAsync("Disconnect");
-        await base.OnDisconnectedAsync(exception);
+        public async Task CreateRoom(string RoomName)
+        {
+            var room = new Room
+            {
+                Name = RoomName,
+                RoomId = Guid.NewGuid().ToString().ToUpper()
+            };
+            var isRoomExist = db.RoomList.Find(x => x.Name == room.Name);
+            if (isRoomExist == null)
+            {
+                db.RoomList.Add(room);
+            }
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, room.Name);
+        }
+
+        public async Task JoinRoom(string RoomId, string current_Id)
+        {
+            var room = db.RoomList.Find(x => x.RoomId == RoomId);
+            var u = db.UserList.Find(x => x.Id == current_Id);
+            if (room != null)
+            {
+                    
+            }
+        }
+
+        public async Task Send(string message, string username)
+        {
+            await Clients.All.SendAsync("Send", message, Context.User.Identity.Name);
+        }
+
+        public async Task SendGroup(string message, string username, string group)
+        {
+            await Clients.All.SendAsync("Send", message, Context.User.Identity.Name);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.All.SendAsync("Greetings");
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            await Clients.Others.SendAsync("Disconnect");
+            await base.OnDisconnectedAsync(exception);
+        }
     }
 }
