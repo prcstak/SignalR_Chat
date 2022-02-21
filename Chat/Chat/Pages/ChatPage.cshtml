@@ -3,69 +3,24 @@
 @using Microsoft.AspNetCore.Identity
 @{
     ViewData["Title"] = "Chat";
+
 }
-<header class="fs-5 bg-dark text-light border-bottom sticky-top py-2 px-4 border-danger border-4">
-    <span class="d-none d-sm-inline">/</span> <span id="header">CHat</span>
+
+<header class="fs-5 bg-dark text-light border-bottom sticky-top py-2 px-4 border-danger border-4"
+        xmlns="http://www.w3.org/1999/html">
+    <span class="d-none d-sm-inline">/</span> <span id="header">Chat</span>
 </header>
 
 
-
-
-<div id="chatroom"></div>
-<div class="input-group mb-2">
-  <input type="text" id="message" class="form-control" placeholder="Имя пользователя получателя" aria-label="Имя пользователя получателя" aria-describedby="button">
+</br>
+<div class="container" id="chatroom">
+  
+</div>
+<div class="input-group mb-2 px-sm-3 px-2" style="position: fixed;
+                                     bottom: 0; width: 90%">
+  <input type="text" id="message" class="form-control" placeholder="" aria-label="Имя пользователя получателя" aria-describedby="button">
   <div class="input-group-append">
     <button class="btn btn-secondary" type="button" id="sendBtn">Send</button>
   </div>
 </div>
-<script>
-        const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("/chat")
-            .build();
- 
-        let userName = '';
-        let inputlabel = ['У меня мурашки от тебя..', 'Ты вдохновила меня на …', 'Ты такая аппетитная!']
-        hubConnection.on('Greetings', function (){
-            let elem = document.createElement("p");
-            elem.appendChild(document.createTextNode("Hello"));
-            
-            var firstElem = document.getElementById("chatroom").firstChild;
-            document.getElementById("chatroom").insertBefore(elem, firstElem);
-            });
-        hubConnection.on('Disconnect', function (){
-                    let elem = document.createElement("p");
-                                elem.appendChild(document.createTextNode("Disconnected"));
-                      
-                                var firstElem = document.getElementById("chatroom").firstChild;
-                                document.getElementById("chatroom").insertBefore(elem, firstElem);
-                    });
-        hubConnection.on('Send', function (message, userName) {
-  
-            // создаем элемент <b> для имени пользователя
-            let userNameElem = document.createElement("b");
-            userNameElem.appendChild(document.createTextNode(userName + ': '));
-  
-            // создает элемент <p> для сообщения пользователя
-            let elem = document.createElement("p");
-            elem.appendChild(userNameElem);
-            elem.appendChild(document.createTextNode(message));
-  
-            var firstElem = document.getElementById("chatroom").firstChild;
-            document.getElementById("chatroom").insertBefore(elem, firstElem);
-  
-        });
-  
-        
-        // отправка сообщения на сервер
-        document.getElementById("sendBtn").addEventListener("click", function (e) {
-            let message = document.getElementById("message").value;
-            hubConnection.invoke("Send", message, userName);
-        });
-        /*document.getElementById("Add").addEventListener("click", function (e) {
-                    let message = 'User';
-                    hubConnection.invoke("CreateRoom ", userName, Chat);
-                });*/
- 
-        
-        hubConnection.start();
-</script>
+

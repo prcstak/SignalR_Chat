@@ -14,9 +14,18 @@ builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddIdentity<User, IdentityRole>(opts => { opts.Password.RequireNonAlphanumeric = false; })
+
+builder.Services.AddIdentity<User, IdentityRole>(opts =>
+    {
+        opts.Password.RequireNonAlphanumeric = false;
+    })
     .AddEntityFrameworkStores<ApplicationContext>();
+/*builder.Services.ConfigureApplicationCookie( options =>
+{
+    options.LoginPath = "/Login";
+} );*/
 builder.Services.AddSingleton<Mock, Mock>();
+
 var app = builder.Build();
 
 app.UseDeveloperExceptionPage();
@@ -27,6 +36,6 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<ChatHub>("/chat");
+app.MapHub<ChatHub>("/chatHub");
 app.MapRazorPages();
 app.Run();

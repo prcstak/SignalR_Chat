@@ -41,9 +41,10 @@ namespace Chat.Hubs
             }
         }
 
-        public async Task Send(string message, string username)
+        public async Task Send(Message message)
         {
-            await Clients.All.SendAsync("Send", message, Context.User.Identity.Name);
+            var user = Context.User.Identity.Name;
+            await Clients.All.SendAsync("Send", message);
         }
 
         public async Task SendGroup(string message, string username, string group)
@@ -53,7 +54,9 @@ namespace Chat.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("Greetings");
+            await Clients.All.SendAsync("Send",new Message() {
+                Text = "hello", Username = "Chat", Time = " 00:00"
+            });
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)

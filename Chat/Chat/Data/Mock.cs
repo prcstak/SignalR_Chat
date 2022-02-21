@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Chat.Hubs;
 
 namespace Chat.Data
@@ -14,5 +15,16 @@ namespace Chat.Data
         public string Owner { get; set; }
         public List<User> Users { get; set; }
         public string RoomId { get; set; }
+    }
+
+    public class Message
+    {
+        public int Id { get; set; }
+        public string  Username { get; set; }
+        public string Text { get; set; }
+        public string Time { get; set; }
+        /*
+        public int UserId { get; set; }
+        public virtual User User { get; set; }*/
     }
 }
