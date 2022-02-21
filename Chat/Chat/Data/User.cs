@@ -7,10 +7,10 @@ namespace Chat.Data
     {
         public int Year { get; set; }
 
-        public User()
+        /*public User()
         {
             Messages = new HashSet<Message>();
         }
-        public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }*/
     }
 }

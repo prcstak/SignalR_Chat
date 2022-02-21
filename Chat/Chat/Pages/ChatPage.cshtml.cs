@@ -7,7 +7,7 @@ namespace Chat.Pages;
 [Authorize]
 public class ChatPage : PageModel
 {
-    public void OnGet()
+    public void OnGet(string id)
     {
         
     }

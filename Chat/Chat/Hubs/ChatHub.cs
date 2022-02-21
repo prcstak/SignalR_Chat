@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Chat.Data;
 using Microsoft.AspNetCore.SignalR;
@@ -14,7 +15,7 @@ namespace Chat.Hubs
         {
             db = context;
         }
-
+        
         public async Task CreateRoom(string RoomName)
         {
             var room = new Room
@@ -42,14 +43,13 @@ namespace Chat.Hubs
         }
 
         public async Task Send(Message message)
-        {
-            var user = Context.User.Identity.Name;
+        {/*Context.UserIdentifier*/
             await Clients.All.SendAsync("Send", message);
         }
 
-        public async Task SendGroup(string message, string username, string group)
+        public async Task SendGroup(string message, string RoomID)
         {
-            await Clients.All.SendAsync("Send", message, Context.User.Identity.Name);
+            await Clients.Group(RoomID).SendAsync("Send", message);
         }
 
         public override async Task OnConnectedAsync()
