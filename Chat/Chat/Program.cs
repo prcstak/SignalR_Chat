@@ -2,6 +2,7 @@ using Chat;
 using Chat.Data;
 using Chat.Hubs;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,10 @@ builder.Services.AddIdentity<User, IdentityRole>(opts =>
         opts.Password.RequireNonAlphanumeric = false;
     })
     .AddEntityFrameworkStores<ApplicationContext>();
+/*builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Cookies.ApplicationCookie.LoginPath = new PathString("/Login");
+});*/
 /*builder.Services.ConfigureApplicationCookie( options =>
 {
     options.LoginPath = "/Login";

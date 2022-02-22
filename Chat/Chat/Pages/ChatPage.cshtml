@@ -4,7 +4,7 @@
 @using System.Security.Claims
 @{
     ViewData["Title"] = "Chat";
-
+    
 }
 
 <header class="fs-5 bg-dark text-light border-bottom sticky-top py-2 px-4 border-danger border-4"
@@ -24,4 +24,8 @@
         <button class="btn btn-secondary" type="button" id="sendBtn">Send</button>
     </div>
 </div>
+<script>
+let _username = '@User.Identity.Name';
+let _userid = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
+</script>
 

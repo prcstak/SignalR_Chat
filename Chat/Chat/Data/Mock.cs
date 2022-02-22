@@ -11,16 +11,17 @@ namespace Chat.Data
     }
     public class Room
     {
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Owner { get; set; }
-        public List<User> Users { get; set; }
-        public string RoomId { get; set; }
+        public List<string> Users { get; set; } = new();
     }
 
     public class Message
     {
         public int Id { get; set; }
         public string  Username { get; set; }
+        public string UserId { get; set; }
         public string Text { get; set; }
         public string Time { get; set; }
         /*public int UserID { get; set; }

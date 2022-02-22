@@ -2,22 +2,23 @@
     .withUrl("/chatHub")
     .build();
 
+var params = new URLSearchParams(document.location.search);
 let _inputPlaceholders = ['У меня мурашки от тебя..', 'Ты вдохновила меня на …', 'Ты такая аппетитная!']
 let _input = document.getElementById('message'); //message text
 let _chat = document.getElementById('chatroom'); //message area
-let _username = 'lol';
-//client user 
+let _roomid = params.get('id');
+/*let _username = '';*/
 //room id
-/*хочу передавать user id
-чтобы сравнивать свой и receive user id для отрисовки
 
+/*
 хочу передавать room id по нажатию на кнопку 
 чтобы отправлять room id на Hub
 */
 
 class Message{
-    constructor(username, text, time, id) {
+    constructor(username, userid, text, time, id, ) {
         this.Username = username;
+        this.UserId = userid
         this.Text = text;
         this.Time = time;
         this.Id = id;
@@ -27,13 +28,12 @@ class Message{
 //-Receive message-------------------------------------------------------------------------------------
 
 function addMessageToChat(message) {
-    console.log(message); 
-    
+    console.log(message); //loggerrrrr
     let messageElem = document.createElement("div");
     let elem = document.createElement("div");
     let name;
     
-    if (message.username == _username){
+    if (message.userId == _userid){
         messageElem.className = "alert alert-secondary";
         elem.className = "d-flex justify-content-end";
         name = _username;
@@ -78,8 +78,10 @@ function sendMessage(e) {
     let date = getDate();
     let text = _input.value;
     if(text != ''){
-        console.log(_username)
-        let message = new Message(_username, text, date);
+        console.log(_username)//loggers
+        console.log(_userid)
+        console.log(_roomid)
+        let message = new Message(_username, _userid, text, date);
         console.log(message)
         hubConnection.invoke('Send', message);
         clearInput();
@@ -88,5 +90,15 @@ function sendMessage(e) {
 
 document.getElementById("sendBtn") //on click send 
     .addEventListener("click", sendMessage);
+
+_input.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        document.getElementById("sendBtn").click();
+    }
+});
 
 hubConnection.start();

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Chat.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+
 
 namespace Chat.Hubs
 {
@@ -16,25 +19,27 @@ namespace Chat.Hubs
             db = context;
         }
         
-        public async Task CreateRoom(string RoomName)
+        public async Task CreateRoom(string RoomName, string UserId)
         {
             var room = new Room
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = RoomName,
-                RoomId = Guid.NewGuid().ToString().ToUpper()
+                Owner = UserId,
             };
+            room.Users.Add(UserId);
             var isRoomExist = db.RoomList.Find(x => x.Name == room.Name);
             if (isRoomExist == null)
             {
                 db.RoomList.Add(room);
             }
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, room.Name);
+            await Groups.AddToGroupAsync(Context.ConnectionId, room.Id);
         }
 
         public async Task JoinRoom(string RoomId, string current_Id)
         {
-            var room = db.RoomList.Find(x => x.RoomId == RoomId);
+            var room = db.RoomList.Find(x => x.Id == RoomId);
             var u = db.UserList.Find(x => x.Id == current_Id);
             if (room != null)
             {
@@ -55,7 +60,7 @@ namespace Chat.Hubs
         public override async Task OnConnectedAsync()
         {
             await Clients.All.SendAsync("Send",new Message() {
-                Text = "hello", Username = "Chat", Time = " 00:00"
+                Text = "hello", Username = "Chat", Time = " 00:00", UserId = "0"
             });
         }
 
