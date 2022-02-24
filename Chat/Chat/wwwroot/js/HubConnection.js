@@ -2,12 +2,14 @@
     .withUrl("/chatHub")
     .build();
 
-var params = new URLSearchParams(document.location.search);
+
 let _inputPlaceholders = ['У меня мурашки от тебя..', 'Ты вдохновила меня на …', 'Ты такая аппетитная!']
 let _input = document.getElementById('message'); //message text
 let _chat = document.getElementById('chatroom'); //message area
+var params = new URLSearchParams(document.location.search);
 let _roomid = params.get('id');
-/*let _username = '';*/
+//let _roomName = document.getElementById("addRoomName").value;
+//let _username = '';
 //room id
 
 /*
@@ -24,6 +26,18 @@ class Message{
         this.Id = id;
     }
 }
+
+//-Create Room----------------------------------------------------------------------------------------
+/*
+
+function addRoom(e){
+    hubConnection.invoke('CreateRoom', _roomName, _userid);
+    /!*window.location.replace()*!/
+}
+
+document.getElementById("addRoom") //on click add room
+    .addEventListener("click", addRoom);
+*/
 
 //-Receive message-------------------------------------------------------------------------------------
 
@@ -83,7 +97,7 @@ function sendMessage(e) {
         console.log(_roomid)
         let message = new Message(_username, _userid, text, date);
         console.log(message)
-        hubConnection.invoke('Send', message);
+        hubConnection.invoke('SendGroup', message, _roomid);
         clearInput();
     }
 }
@@ -101,4 +115,9 @@ _input.addEventListener("keyup", function(event) {
     }
 });
 
-hubConnection.start();
+//-ChatJoin---------------------------------------------------------------------
+
+
+
+hubConnection.start().then(function () {hubConnection.invoke('JoinRoom', _roomid)});
+

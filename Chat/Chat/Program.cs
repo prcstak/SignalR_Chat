@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<Mock, Mock>();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -29,7 +30,6 @@ builder.Services.AddIdentity<User, IdentityRole>(opts =>
 {
     options.LoginPath = "/Login";
 } );*/
-builder.Services.AddSingleton<Mock, Mock>();
 
 var app = builder.Build();
 

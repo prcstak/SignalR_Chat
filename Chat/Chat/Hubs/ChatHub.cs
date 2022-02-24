@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Chat.Data;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
 
@@ -18,56 +14,52 @@ namespace Chat.Hubs
         {
             db = context;
         }
-        
-        public async Task CreateRoom(string RoomName, string UserId)
+
+        public void CreateRoom(string RoomName)
         {
+            var userid = Context.UserIdentifier;
             var room = new Room
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = RoomName,
-                Owner = UserId,
+                Owner = userid,
             };
-            room.Users.Add(UserId);
-            var isRoomExist = db.RoomList.Find(x => x.Name == room.Name);
-            if (isRoomExist == null)
+            db.RoomList.Add(room);
+        }
+
+        public async Task JoinRoom(string roomid)
+        {
+            /*var room = db.RoomList.Find(x => x.Id == roomid);/*
+            var user = db.UserList.Find(x => x.Id == Context.UserIdentifier);#1#
+            if (room != null /*&& user != null#1#)
             {
-                db.RoomList.Add(room);
-            }
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, room.Id);
-        }
-
-        public async Task JoinRoom(string RoomId, string current_Id)
-        {
-            var room = db.RoomList.Find(x => x.Id == RoomId);
-            var u = db.UserList.Find(x => x.Id == current_Id);
-            if (room != null)
+                room.Users.Add(Context.UserIdentifier);
+                await Groups.AddToGroupAsync(Context.ConnectionId, room.Id);
+            }*/
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomid);
+            await Clients.All.SendAsync("Send", new Message()
             {
-                    
-            }
-        }
-
-        public async Task Send(Message message)
-        {/*Context.UserIdentifier*/
-            await Clients.All.SendAsync("Send", message);
-        }
-
-        public async Task SendGroup(string message, string RoomID)
-        {
-            await Clients.Group(RoomID).SendAsync("Send", message);
-        }
-
-        public override async Task OnConnectedAsync()
-        {
-            await Clients.All.SendAsync("Send",new Message() {
                 Text = "hello", Username = "Chat", Time = " 00:00", UserId = "0"
             });
         }
 
-        public override async Task OnDisconnectedAsync(Exception? exception)
+        public async Task Send(Message message)
         {
-            await Clients.Others.SendAsync("Disconnect");
-            await base.OnDisconnectedAsync(exception);
+            /*Context.UserIdentifier*/
+            await Clients.All.SendAsync("Send", message);
+        }
+
+        public async Task SendGroup(Message message, string roomid)
+        {
+            await Clients.Group(roomid).SendAsync("Send", message);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.All.SendAsync("Send", new Message()
+            {
+                Text = "hello", Username = "Chat", Time = " 00:00", UserId = "0"
+            });
         }
     }
 }

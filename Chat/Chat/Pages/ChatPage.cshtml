@@ -4,7 +4,7 @@
 @using System.Security.Claims
 @{
     ViewData["Title"] = "Chat";
-    
+
 }
 
 <header class="fs-5 bg-dark text-light border-bottom sticky-top py-2 px-4 border-danger border-4"
@@ -15,7 +15,7 @@
 
 <br/>
 <div class="container" id="chatroom">
-  
+
 </div>
 <div class="input-group mb-2 px-sm-3 px-2" style="position: fixed;
                                      bottom: 0; width: 90%">
@@ -28,4 +28,4 @@
 let _username = '@User.Identity.Name';
 let _userid = '@User.FindFirstValue(ClaimTypes.NameIdentifier)';
 </script>
-
+<script src="js/HubConnection.js"></script>
